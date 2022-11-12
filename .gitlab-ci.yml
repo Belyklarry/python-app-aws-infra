@@ -1,0 +1,57 @@
+stages:
+    - terraform_validate
+    - terraform_plan
+    - terraform_apply
+    - terraform_destroy
+
+default:
+    image:
+        name: hashicorp/terraform:1.2.9
+        entrypoint: 
+            - /usr/bin/env
+            - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    before_script:
+        - terraform init -backend-config=address=${TF_ADDRESS} -backend-config=lock_address=${TF_ADDRESS}/lock -backend-config=unlock_address=${TF_ADDRESS}/lock -backend-config=username=${TF_USERNAME} -backend-config=password=${TF_PASSWORD} -backend-config=lock_method=POST -backend-config=unlock_method=DELETE -backend-config=retry_wait_min=5
+    cache:
+        key: terraform
+        paths:
+            - .terraform
+
+validate:
+    stage: terraform_validate
+    script:
+        - terraform validate
+    except:
+        refs:
+            - main
+
+plan:
+    stage: terraform_plan
+    script:
+        - terraform plan --out plan
+    only:
+        refs:
+            - main
+    artifacts:
+        paths:
+            - plan
+    
+apply:
+    stage: terraform_apply
+    script:
+        - terraform apply --auto-approve plan
+    when: manual
+    allow_failure: false
+    only:
+        refs:
+            - main
+
+destroy:
+    stage: terraform_destroy
+    script: 
+        - terraform destroy --auto-approve
+    when: manual
+    allow_failure: false
+    only:
+        refs:
+            - main
