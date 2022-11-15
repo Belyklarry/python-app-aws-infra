@@ -28,7 +28,7 @@ module "eks_blueprints" {
   }
 
   application_teams = {
-    python-app-team = {
+    python-app = {
       "labels" = {
         "appName"     = "python-app",
         "environment" = "dev",
@@ -43,7 +43,7 @@ module "eks_blueprints" {
         "services"        = "10"
       }
       ## Manifests Example: we can specify a directory with kubernetes manifests that can be automatically applied in the python-app namespace.
-      manifests_dir = "./kubernetes/python-app-team"
+      manifests_dir = "./kubernetes/python-app"
       users         = [data.aws_caller_identity.current.arn]
     }
 
@@ -124,7 +124,7 @@ module "kubernetes_addons" {
 
 
   enable_aws_load_balancer_controller  = true
-  enable_amazon_eks_aws_ebs_csi_driver = true
+  enable_amazon_eks_aws_ebs_csi_driver = false
   enable_prometheus                    = true
   enable_grafana                       = true
 

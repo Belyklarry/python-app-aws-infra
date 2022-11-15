@@ -17,9 +17,9 @@ output "configure_kubectl" {
   value       = module.eks_blueprints.configure_kubectl
 }
 
-output "python-app-team" {
+output "python-app" {
   description = "Role Arn of python-app team"
-  value       = module.eks_blueprints.teams[*].application_teams_iam_role_arn["python-app-team"]
+  value       = module.eks_blueprints.teams[*].application_teams_iam_role_arn["python-app"]
 }
 
 output "platform_team" {
