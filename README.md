@@ -1,7 +1,7 @@
-# Basic Local Test Environment
+# Python App AWS Infrastructure
 
-* Provision local development environment in EKS with Terraform
 ## Pre-requisites
+
 * AWS Account
 * IAM User/Role with Administrator Access
 * AWSCLI
@@ -9,55 +9,89 @@
 * Terraform
 * Kubectl
 * jq
-## AWS Account
-If you do not have an AWS account, follow the instructions on this [link](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) on how to set it up.
-[Create](https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started_create-admin-group.html) a user with Admin Privileges and [configure](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) your local machine to use those credentials.
+
 ## Clone Infrastructure Repository
+
 Clone the infrastructure repository by running the following command:
+
 ```console
-git clone https://github.com/Belyklarry/clj-app-infra.git
+git clone https://github.com/Belyklarry/python-app-aws-infra.git
 ```
+
 ## Deploy Infrastructure
-```cd clj-app-infra``` into the repo.
-Now run: ```terraform init```
-After initializing the repo with Terraform, run: ```terraform plan```. This is to see what terraform will deploy on AWS on your behalf.
-Finally, run: ```terraform apply```. This will show you the plan again and you’ll have to respond to the prompt with a “yes”.
-The deployment will take about 15 minutes or so.
-## Deploy Application
-In ```main.tf```, in the ```kubernetes_addons``` module, the workload is commented out. Uncomment it, save the file, and again run:
+
+```cd python-app-aws-infra``` into the repo.
+Now to initialize terraform, run:
+
+```console
+terraform init
+```
+
+After initializing the repo with Terraform, run:
+
 ```console
 terraform plan
 ```
-Followed by:
+
+Finally, run:
+
+```console
+terraform apply
+```
+
+## Deploy Application
+
+In ```main.tf```, in the ```kubernetes_addons``` module, the workload is commented out. Uncomment it, save the file, and again run:
+
 ```console
 terraform apply -auto-approve
 ```
-This deploys the application into the cluster.
-## Access the EKS cluster and Application
-After the deployment, a command to access the EKS cluster will be displayed in the outputs. Run that command.
-You can now use kubectl to check what’s in the cluster.
-To access the application on your browser, run:
-```console
-Kubectl -n clj-microservices get ingress
-```
-Copy and paste the ingress URL of the clj-microservices app on your browser and the front-end of the application will be displayed.
 
-**NB: For more information on the solution, read the ```solution-documentation.md``` file.**
+**NB: This deploys the application into the cluster.**
+
+## Access the EKS cluster and Application
+
+After the deployment, a command to access the EKS cluster will be displayed in the outputs. Run that command.
+You can now use kubectl to access the cluster.
+To access the application on your browser, run:
+
+```console
+Kubectl -n argocd get svc
+```
+
+* Copy and paste the loadbalancer URL for argocd server.
+* Username is ```admin```.
+* The password is obtained from:
+
+```console
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+Here you can see all the resources created in your cluster. To access the python-app, click on the python-app ingress icon and it'll redirect you to the application homepage.
+**NB: Ingress will take about 30 minutes for it to start serving traffic.**
 
 ## Cleanup
+
 In order to let Terraform cleanup all the resources that it has created, we first need to delete the resources created outside Terraform like the load balancer and EBS volume. For that, we comment out the line deploying our workloads in the ```main.tf``` file. For the changes to take effect, run:
+
 ```console
 terraform apply -auto-approve
 ```
+
 **First remove the ```kubernetes_addons``` module:**
+
 ```console
 terraform destroy -target=module.kubernetes_addons -auto-approve
 ```
+
 **We can now safetly delete our EKS cluster:**
+
 ```console
 terraform destroy -target=module.eks_blueprints -auto-approve
 ```
-**Finally we can delete the VPC and all remaining services**
+
+**Finally we can delete the VPC and all remaining services:**
+
 ```console
 terraform destroy -auto-approve
 ```
