@@ -125,9 +125,6 @@ module "kubernetes_addons" {
 
   enable_aws_load_balancer_controller  = true
   enable_amazon_eks_aws_ebs_csi_driver = true
-  enable_prometheus                    = true
-  enable_grafana                       = true
-
 }
 
 
