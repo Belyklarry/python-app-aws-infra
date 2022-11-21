@@ -36,7 +36,7 @@ terraform plan
 Finally, run:
 
 ```console
-terraform apply
+terraform apply -auto-approve
 ```
 
 ## Deploy Application
