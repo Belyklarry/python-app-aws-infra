@@ -68,6 +68,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```
 
 Here you can see all the resources created in your cluster. To access the python-app, click on the python-app ingress icon and it'll redirect you to the application homepage.
+
 **NB: Ingress will take about 30 minutes for it to start serving traffic.**
 
 ## Cleanup
