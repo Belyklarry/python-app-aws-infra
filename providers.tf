@@ -23,7 +23,7 @@ terraform {
 
 provider "aws" {
   region  = "af-south-1"
-  profile = "dell-wsl-main"
+  profile = "default"
 }
 
 provider "kubernetes" {
