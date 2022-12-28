@@ -96,3 +96,5 @@ terraform destroy -target=module.eks_blueprints -auto-approve
 ```console
 terraform destroy -auto-approve
 ```
+
+**THANK YOU!**
